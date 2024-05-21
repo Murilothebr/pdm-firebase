@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, SectionList, SafeAreaView, TextInput } from "react-native";
-import { Colors } from "@/consts/colors";
 import HeaderWithTitle from "@/components/headers/Header";
-import DATA, { organizeCarsIntoSections } from "@/services/data";
+import getCars from "@/service/hooks/getCars"
+import organizeCarsIntoSections from "@/service/carsService"
 
 export default function index() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [cars, setCars] = useState<any[]>([]);
 
   const onChangeSearch = (query: any) => {
     setSearchQuery(query);
   };
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const carsData = await getCars();
+        setCars(carsData);
+      } catch (error) {
+        console.error("Failed to fetch cars data:", error);
+      }
+    };
+
+    fetchCars();
+  }, []);
 
   return (
     <View>
@@ -25,7 +39,7 @@ export default function index() {
         />
 
         <SectionList
-          sections={organizeCarsIntoSections(DATA).filter((data) => data.title.toUpperCase().includes(searchQuery.toUpperCase()))}
+          sections={organizeCarsIntoSections(cars).filter((data) => data.title.toUpperCase().includes(searchQuery.toUpperCase()))}
           renderItem={({ item }) => (
             <View style={styles.item}>
               <Text style={styles.model}>{item.model}</Text>
@@ -51,8 +65,8 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     color: "black",
-    borderWidth: 1, // Add border width
-    borderColor: "gray", // Add border color
+    borderWidth: 1, 
+    borderColor: "gray",
   },
   item: {
     padding: 30,

@@ -1,56 +1,38 @@
-import { View, Text, TextInput, StyleSheet, Alert, ImageBackground } from "react-native";
+import { StyleSheet} from "react-native";
 import React, { useState } from "react";
 import { Link, useRouter } from "expo-router";
 import FormInput from "@/components/form/FormInput";
 import FormButton from "@/components/form/FormButton";
 import { Spacing } from "@/consts/spacing";
-import { Colors } from "@/consts/colors";
 import FullScreen from "@/components/containers/FullScreen";
 import { Image } from 'expo-image';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
 
 export default function Login() {
   const router = useRouter();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleLogin = () => {
-
-    if (username != "teste") {
-      Alert.alert(
-        "Usuario não registrado",
-        "Certifique-se de que seu usuario está registrado",
-        [
-          {
-            text: "OK",
-            onPress: () => console.log("OK Pressed"),
-            style: "cancel",
-          },
-        ],
-        { cancelable: false }
-      );
-
-      return;
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setMessage('User logged in successfully');
+      
+      router.replace("/home");
+    } catch (error: any) {
+      let errorMessage = 'An error occurred';
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No user found with this email';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address';
+      }
+      setMessage(errorMessage);
     }
-
-    if (password != "123") {
-      Alert.alert(
-        "Senha incorreta",
-        "Certifique-se de que seu senha está correta",
-        [
-          {
-            text: "OK",
-            onPress: () => console.log("OK Pressed"),
-            style: "cancel",
-          },
-        ],
-        { cancelable: false }
-      );
-
-      return;
-    }
-
-    router.replace("/home");
   };
 
   const blurhash =
@@ -67,8 +49,8 @@ export default function Login() {
 
       <FormInput
         label="Username"
-        value={username}
-        onChangeText={setUsername}
+        value={email}
+        onChangeText={setEmail}
       />
 
       <FormInput
