@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
   title: {
     color: "green",
     textAlign: "center",
-    fontSize: 20
+    fontSize: 20,
+    fontWeight: "bold"
   },
   buttonImage: {
     width: 200,

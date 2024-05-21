@@ -4,7 +4,7 @@
 node_modules/
 
 #Firebase
-FirebaseConfig.ts
+//FirebaseConfig.ts
 
 # Expo
 .expo/
