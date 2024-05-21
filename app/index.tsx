@@ -1,4 +1,4 @@
-import { StyleSheet} from "react-native";
+import { StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { Link, useRouter } from "expo-router";
 import FormInput from "@/components/form/FormInput";
@@ -8,6 +8,7 @@ import FullScreen from "@/components/containers/FullScreen";
 import { Image } from 'expo-image';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import FormButtonCreate from "@/components/form/FormButtonCreate";
 
 export default function Login() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setMessage('User logged in successfully');
-      
+
       router.replace("/home");
     } catch (error: any) {
       let errorMessage = 'An error occurred';
@@ -37,7 +38,7 @@ export default function Login() {
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
-    
+
   return (
     <FullScreen>
 
@@ -60,7 +61,7 @@ export default function Login() {
         secureTextEntry
       />
 
-      <FormButton onPress={handleLogin} title="Login!" />
+      <FormButtonCreate onPress={handleLogin} title="Login!" />
 
       <Link style={styles.registerLink} href="/register">
         Novo por aqui? Registre-se!

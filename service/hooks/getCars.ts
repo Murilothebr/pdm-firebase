@@ -8,7 +8,8 @@ const getCars = async (): Promise<Cars[]> => {
         if (snapshot.exists()) {
             const carsData = snapshot.val();
             const carsList: Cars[] = Object.keys(carsData).map((key) => ({
-                id: Number(key),
+                id: key,
+                price: carsData[key].price,
                 brand: carsData[key].brand,
                 model: carsData[key].model,
                 year: carsData[key].year,

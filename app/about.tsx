@@ -15,7 +15,7 @@ export default function about() {
         </Text>
 
         <Text style={styles.boldText}>
-          Versao 1.0.0
+          Versao 1.0.1
         </Text>
 
         <Text style={styles.text}>
@@ -23,7 +23,7 @@ export default function about() {
         </Text>
 
         <Text style={styles.text}>
-          https://github.com/Murilothebr/pdm-avalia-o-01
+          https://github.com/Murilothebr/pdm-firebase
         </Text>
       </Card>
     </View>
