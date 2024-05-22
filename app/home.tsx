@@ -4,6 +4,7 @@ import HeaderWithTitle from "@/components/headers/Header";
 import addCar from "@/service/hooks/addCar";
 import getCars from "@/service/hooks/getCars";
 import deleteCars from "@/service/hooks/deleteCar";
+import updateCar from "@/service/hooks/editarCar"
 import organizeCarsIntoSections from "@/service/carsService";
 import { FontAwesome, AntDesign  } from '@expo/vector-icons';
 import FormInput from "@/components/form/FormInput";
@@ -17,6 +18,8 @@ export default function index() {
   const [cars, setCars] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [newCar, setNewCar] = useState<Omit<Cars, 'id'>>({ brand: '', price: '', model: '', year: '' });
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [currentCar, setCurrentCar] = useState<Omit<Cars, 'id'> & { id?: number }>({ brand: '', price: '', model: '', year: '' });
 
   const onChangeSearch = (query: any) => {
     setSearchQuery(query);
@@ -56,6 +59,26 @@ export default function index() {
     }
   };
 
+  const handleEditCar = async () => {
+    try {
+      if (currentCar.id) {
+        await updateCar(currentCar as Cars);
+        setModalVisible(false);
+        setCurrentCar({ brand: '', model: '', year: '', price: '' });
+        const carsData = await getCars();
+        setCars(carsData);
+      }
+    } catch (error) {
+      console.error("Failed to edit car:", error);
+    }
+  };
+
+  const openEditModal = (car: Cars) => {
+    setCurrentCar(car);
+    setEditMode(true);
+    setModalVisible(true);
+  };
+
   return (
     <View style={styles.view}>
       <HeaderWithTitle title="TopCar" actionSheetOptions={['Cancel', 'About', 'Logout']} HideThisPage={false} />
@@ -84,29 +107,28 @@ export default function index() {
           <View style={styles.modalView}>
             <FormInput
               label="Marca"
-              value={newCar.brand}
-              onChangeText={(text) => setNewCar({ ...newCar, brand: text })}
+              value={currentCar.brand}
+              onChangeText={(text) => setCurrentCar({ ...currentCar, brand: text })}
             />
             <FormInput
               label="Modelo"
-              value={newCar.model}
-              onChangeText={(text) => setNewCar({ ...newCar, model: text })}
+              value={currentCar.model}
+              onChangeText={(text) => setCurrentCar({ ...currentCar, model: text })}
             />
             <FormInput
               label="Preço (Mil / BRL)"
-              value={newCar.price}
-              onChangeText={(text) => setNewCar({ ...newCar, price: text })}
+              value={currentCar.price}
+              onChangeText={(text) => setCurrentCar({ ...currentCar, price: text })}
             />
             <FormInput
               label="Ano fabricação"
-              value={newCar.year.toString()}
-              onChangeText={(text) => setNewCar({ ...newCar, year: text })}
+              value={currentCar.year.toString()}
+              onChangeText={(text) => setCurrentCar({ ...newCar, year: text })}
               keyboardType="numeric"
             />
 
-            <FormButtonCreate title="Add Car" onPress={handleAddCar} />
+            <FormButtonCreate title={editMode ? "Edit Car" : "Add Car"} onPress={editMode ? handleEditCar : handleAddCar} />
             <FormButtonCancel title="Cancel" onPress={() => setModalVisible(false)} />
-
           </View>
         </Modal>
 
@@ -119,6 +141,9 @@ export default function index() {
               <Text style={styles.year}>{item.year}</Text>
               <TouchableOpacity onPress={() => handleDelete(item.id)}>
                 <FontAwesome name="trash" size={15} color="red" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => openEditModal(item)} style={styles.editButton}>
+                <FontAwesome name="pencil" size={15} color="gray" />
               </TouchableOpacity>
             </View>
           )}
@@ -200,5 +225,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  }
+  },
+  editButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
 });
