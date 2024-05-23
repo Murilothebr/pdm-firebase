@@ -6,12 +6,12 @@ import { Card } from 'react-native-paper'
 export default function about() {
   return (
     <View style={styles.container}>
-      <HeaderWithTitle title="Sobre o aplicativo TopCar" actionSheetOptions={['Cancel', 'Home', 'Logout']} HideThisPage={true} />
+      <HeaderWithTitle title="Sobre o aplicativo Pet Shoppe" actionSheetOptions={['Cancel', 'Home', 'Logout']} HideThisPage={true} />
 
       <Card style={styles.card}>
 
         <Text style={styles.boldText}>
-          Top Car
+          Pet Shoppe
         </Text>
 
         <Text style={styles.boldText}>
@@ -19,11 +19,11 @@ export default function about() {
         </Text>
 
         <Text style={styles.text}>
-          Murilo Nunes Marcal
+          Cesar Valentim Abreu
         </Text>
 
         <Text style={styles.text}>
-          https://github.com/Murilothebr/pdm-firebase
+          https://github.com/supleme/pdm-firebase
         </Text>
       </Card>
     </View>

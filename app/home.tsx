@@ -1,99 +1,95 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SectionList, SafeAreaView, TextInput, TouchableOpacity, Modal, Button } from "react-native";
+import { View, Text, StyleSheet, SectionList, SafeAreaView, TextInput, TouchableOpacity, Modal, FlatList, Image } from "react-native";
 import HeaderWithTitle from "@/components/headers/Header";
-import addCar from "@/service/hooks/addCar";
-import getCars from "@/service/hooks/getCars";
-import deleteCars from "@/service/hooks/deleteCar";
-import updateCar from "@/service/hooks/editarCar"
-import organizeCarsIntoSections from "@/service/carsService";
-import { FontAwesome, AntDesign  } from '@expo/vector-icons';
+import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import FormInput from "@/components/form/FormInput";
-import FormButton from "@/components/form/FormButton";
 import FormButtonCancel from "@/components/form/FormButtonCancel";
 import FormButtonCreate from "@/components/form/FormButtonCreate";
+import getPets from "@/service_/hooks/getPets";
+import deletePets from "@/service_/hooks/deletePet";
+import updatePet from "@/service_/hooks/editPet";
+import addPet from "@/service_/hooks/addPet";
 
-
-export default function index() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [cars, setCars] = useState<any[]>([]);
+export default function CarListScreen() {
+  const [pets, setPets] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [newCar, setNewCar] = useState<Omit<Cars, 'id'>>({ brand: '', price: '', model: '', year: '' });
+  const [newPet, setNewPet] = useState({ name: '', age: '', gender: '' });
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [currentCar, setCurrentCar] = useState<Omit<Cars, 'id'> & { id?: number }>({ brand: '', price: '', model: '', year: '' });
-
-  const onChangeSearch = (query: any) => {
-    setSearchQuery(query);
-  };
+  const [currentPet, setCurrentPet] = useState({ id: null, name: '', age: '', gender: ''});
 
   useEffect(() => {
-    const fetchCars = async () => {
+    const fetchPets = async () => {
       try {
-        const carsData = await getCars();
-        setCars(carsData);
+        const petsData = await getPets();
+        setPets(petsData);
       } catch (error) {
-        console.error("Failed to fetch cars data:", error);
+        console.error("Failed to fetch pets data:", error);
       }
     };
 
-    fetchCars();
+    fetchPets();
   }, []);
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteCars(id);
-      setCars(cars.filter((car) => car.id !== id));
+      await deletePets(id);
+      setPets(pets.filter((pet) => pet.id !== id));
     } catch (error) {
-      console.error("Failed to delete car:", error);
+      console.error("Failed to delete pet:", error);
     }
   };
 
-  const handleAddCar = async () => {
+  const handleAddPet = async () => {
     try {
-      await addCar(newCar);
+      await addPet(newPet);
       setModalVisible(false);
-      setNewCar({ brand: '', price: '', model: '', year: '' });
-      const carsData = await getCars();
-      setCars(carsData);
+      setNewPet({ name: '', age: '', gender: ''})
+      const petsData = await getPets();
+      setPets(petsData)
     } catch (error) {
-      console.error("Failed to add car:", error);
+      console.error("Failed to add pet:", error);
     }
   };
 
-  const handleEditCar = async () => {
+  const handleEditPet = async () => {
     try {
-      if (currentCar.id) {
-        await updateCar(currentCar as Cars);
+      if (currentPet.id) {
+        await updatePet(currentPet);
         setModalVisible(false);
-        setCurrentCar({ brand: '', model: '', year: '', price: '' });
-        const carsData = await getCars();
-        setCars(carsData);
+        setCurrentPet({ id: null, name: '', age: '', gender: ''});
+        const petsData = await getPets();
+        setPets(petsData);
       }
     } catch (error) {
-      console.error("Failed to edit car:", error);
+      console.error("Failed to edit pet:", error);
     }
   };
 
-  const openEditModal = (car: Cars) => {
-    setCurrentCar(car);
+  const openAddModal = () => {
+    setNewPet({ age: '', name: '', gender: '' });
+    setEditMode(false);
+    setModalVisible(true);
+  };
+
+  const openEditModal = (pet: Pets) => {
+    setCurrentPet(pet);
     setEditMode(true);
     setModalVisible(true);
   };
 
   return (
     <View style={styles.view}>
-      <HeaderWithTitle title="TopCar" actionSheetOptions={['Cancel', 'About', 'Logout']} HideThisPage={false} />
+      <HeaderWithTitle title="Pet Shoppe" actionSheetOptions={['Cancel', 'About', 'Logout']} HideThisPage={false} />
+
+      <Image
+            source={{ uri: "https://i.pinimg.com/736x/79/2e/a4/792ea40494b7d47ab0a5692a67123ffc.jpg" }}
+            style={styles.logo}
+          />
 
       <SafeAreaView style={styles.container}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Cade..."
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-          placeholderTextColor="black"
-        />
-
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
-          <AntDesign name="pluscircle" size={50} color="green" />
+        
+        <TouchableOpacity onPress={openAddModal} style={styles.addButton}>
+          <AntDesign name="upcircle" size={50} color="blue" />
         </TouchableOpacity>
 
         <Modal
@@ -104,55 +100,57 @@ export default function index() {
             setModalVisible(!modalVisible);
           }}
         >
+          
           <View style={styles.modalView}>
-            <FormInput
-              label="Marca"
-              value={currentCar.brand}
-              onChangeText={(text) => setCurrentCar({ ...currentCar, brand: text })}
-            />
-            <FormInput
-              label="Modelo"
-              value={currentCar.model}
-              onChangeText={(text) => setCurrentCar({ ...currentCar, model: text })}
-            />
-            <FormInput
-              label="Preço (Mil / BRL)"
-              value={currentCar.price}
-              onChangeText={(text) => setCurrentCar({ ...currentCar, price: text })}
-            />
-            <FormInput
-              label="Ano fabricação"
-              value={currentCar.year.toString()}
-              onChangeText={(text) => setCurrentCar({ ...newCar, year: text })}
-              keyboardType="numeric"
-            />
 
-            <FormButtonCreate title={editMode ? "Edit Car" : "Add Car"} onPress={editMode ? handleEditCar : handleAddCar} />
+          <Image
+            source={{ uri: "https://i.pinimg.com/736x/79/2e/a4/792ea40494b7d47ab0a5692a67123ffc.jpg" }}
+            style={styles.logo}
+          />
+            <FormInput
+              label="Nome"
+              value={editMode ? currentPet.name : newPet.name}
+              onChangeText={(text) => editMode ? setCurrentPet({ ...currentPet, name: text }) : setNewPet({ ...newPet, name: text })}
+            />
+            <FormInput
+              label="Idade"
+              value={editMode ? currentPet.age : newPet.age}
+              onChangeText={(text) => editMode ? setCurrentPet({ ...currentPet, age: text }) : setNewPet({ ...newPet, age: text })}
+            />
+            <FormInput
+              label="Genero"
+              value={editMode ? currentPet.gender : newPet.gender}
+              onChangeText={(text) => editMode ? setCurrentPet({ ...currentPet, gender: text }) : setNewPet({ ...newPet, gender: text })}
+            />          
+
+            <FormButtonCreate title={editMode ? "Edit Pet" : "Add Car"} onPress={editMode ? handleEditPet : handleAddPet} />
             <FormButtonCancel title="Cancel" onPress={() => setModalVisible(false)} />
           </View>
         </Modal>
 
-        <SectionList
-          sections={organizeCarsIntoSections(cars).filter((data) => data.title.toUpperCase().includes(searchQuery.toUpperCase()))}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text style={styles.model}>{item.model}</Text>
-              <Text style={styles.carPrice}>{item.price},000R$</Text>
-              <Text style={styles.year}>{item.year}</Text>
-              <TouchableOpacity onPress={() => handleDelete(item.id)}>
-                <FontAwesome name="trash" size={15} color="red" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => openEditModal(item)} style={styles.editButton}>
-                <FontAwesome name="pencil" size={15} color="gray" />
-              </TouchableOpacity>
-            </View>
-          )}
-
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.header}>{title}</Text>
-          )}
+        <FlatList
+          data={pets}
+          renderItem={({ item }) => 
+            item.header ? (
+              <Text style={styles.header}>{item.name}</Text>
+            ) : (
+              <View style={styles.item}>
+                <Text style={styles.model}>{item.name} {item.age}</Text>
+                <Text style={styles.petAge}>{item.gender}</Text>
+                <View style= {styles.icons}>
+                  <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                    <FontAwesome name="trash-o" size={15} color="gray" style={{ marginRight: 20 }} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => openEditModal(item)} >
+                    <FontAwesome name="pencil-square" size={15} color="blue"/>
+                  </TouchableOpacity>
+                </View>
+                
+              </View>
+            )
+          }
+          keyExtractor={(item) => item.header ? item.title : item.id.toString()}
         />
-
       </SafeAreaView>
     </View>
   );
@@ -174,41 +172,41 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "gray",
   },
+  logo: {
+    width: 200,
+    height: 150,
+    alignSelf: "center",
+  },
   item: {
-    alignItems: "center"
+    alignItems: "center",
   },
   header: {
     fontSize: 40,
     textAlign: "center",
     fontWeight: "bold",
-    padding: 20
+    padding: 20,
   },
   model: {
     fontSize: 30,
     textAlign: "center",
   },
-  carPrice: {
+  petAge: {
     fontSize: 20,
     textAlign: "center",
     color: "lightgreen",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   year: {
     fontSize: 12,
     textAlign: "center",
     color: "gray",
   },
-  carId: {
-    fontSize: 10,
-    textAlign: "center",
-    color: "lightgray",
-  },
   deleteButton: {
     color: 'red',
   },
   addButton: {
     marginTop: 15,
-    alignSelf: "center"
+    alignSelf: "center",
   },
   modalView: {
     flex: 1,
@@ -231,4 +229,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
   },
+  icons:{
+    flexDirection: 'row',
+    padding: 5,
+  }
 });

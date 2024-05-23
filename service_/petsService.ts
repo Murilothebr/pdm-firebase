@@ -1,8 +1,8 @@
-function organizeCarsIntoSections(data: Cars[]): { title: string, data: Cars[] }[] {
-    const sections: { [key: string]: Cars[] } = {};
+function organizeCarsIntoSections(data: Pets[]): { title: string, data: Pets[] }[] {
+    const sections: { [key: string]: Pets[] } = {};
 
     data.forEach(item => {
-        const firstLetter = item.brand.toUpperCase();
+        const firstLetter = item.name.toUpperCase();
 
         if (!sections[firstLetter]) {
             sections[firstLetter] = [];

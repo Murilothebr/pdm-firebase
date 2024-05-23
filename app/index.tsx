@@ -13,8 +13,8 @@ import FormButtonCreate from "@/components/form/FormButtonCreate";
 export default function Login() {
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('cesar@exemplo.com');
+  const [password, setPassword] = useState('123456');
   const [message, setMessage] = useState('');
 
   const handleLogin = async () => {
@@ -43,19 +43,19 @@ export default function Login() {
     <FullScreen>
 
       <Image
-        source={{ uri: "https://www.lojacarros.com.br/static/images/loja-carros.png" }}
+        source={{ uri: "https://i.pinimg.com/736x/79/2e/a4/792ea40494b7d47ab0a5692a67123ffc.jpg" }}
         style={styles.logo}
         placeholder={blurhash}
       />
 
       <FormInput
-        label="Username"
+        label="Usuário"
         value={email}
         onChangeText={setEmail}
       />
 
       <FormInput
-        label="Password"
+        label="Senha"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
