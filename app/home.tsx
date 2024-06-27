@@ -8,10 +8,8 @@ import updateCar from "@/service/hooks/editarCar"
 import organizeCarsIntoSections from "@/service/carsService";
 import { FontAwesome, AntDesign  } from '@expo/vector-icons';
 import FormInput from "@/components/form/FormInput";
-import FormButton from "@/components/form/FormButton";
 import FormButtonCancel from "@/components/form/FormButtonCancel";
 import FormButtonCreate from "@/components/form/FormButtonCreate";
-
 
 export default function index() {
   const [searchQuery, setSearchQuery] = useState('');

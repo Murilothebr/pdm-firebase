@@ -1,5 +1,5 @@
 import { getDatabase, ref, get, child } from 'firebase/database';
-import { db } from '../../firebaseConfig';
+import { db } from '@/firebaseConfig';
 
 const getCars = async (): Promise<Cars[]> => {
     const dbRef = ref(db);
