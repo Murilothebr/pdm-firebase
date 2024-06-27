@@ -11,6 +11,7 @@ import FormInput from "@/components/form/FormInput";
 import FormButtonCancel from "@/components/form/FormButtonCancel";
 import FormButtonCreate from "@/components/form/FormButtonCreate";
 
+
 export default function index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [cars, setCars] = useState<any[]>([]);

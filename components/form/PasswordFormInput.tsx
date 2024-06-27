@@ -1,20 +1,15 @@
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TextInputProps,
-} from "react-native";
-import React, { useState } from "react";
-import { Colors } from "@/consts/colors";
-import { Spacing } from "@/consts/spacing";
+// PasswordFormInput.jsx
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { Colors } from '@/consts/colors';
+import { Spacing } from '@/consts/spacing';
 import { AntDesign } from '@expo/vector-icons';
 
 type FormInput = {
   label?: string;
 } & TextInputProps;
 
-export default function PasswordFormInput({ label, ...rest }: FormInput) {
+const PasswordFormInput = ({ label, ...rest }: FormInput) => {
   const [focus, setFocus] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,35 +25,37 @@ export default function PasswordFormInput({ label, ...rest }: FormInput) {
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           secureTextEntry={!showPassword}
-          style={styles.input} // Added style prop
+          style={styles.input}
+          testID="password-input" // Adicionando testID para o TextInput
         />
 
         <AntDesign
-          name={showPassword ? "eye" : "eyeo"}
+          name={showPassword ? 'eye' : 'eyeo'}
           size={26}
           color="black"
           style={styles.icon}
           onPress={() => setShowPassword(!showPassword)}
+          testID="eye-icon" // Adicionando testID para o ícone de visualização de senha
         />
       </View>
 
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   
   container: {
     marginLeft: 15,
     marginTop: 30,
     padding: 4,
-    width: "85%",
-    borderBottomColor: "grey",
+    width: '85%',
+    borderBottomColor: 'grey',
     borderBottomWidth: 1,
   },
   label: {
@@ -67,7 +64,7 @@ const styles = StyleSheet.create({
   },
   focus: {
     color: Colors.primary,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   focusContainer: {
     borderBottomColor: Colors.primary,
@@ -81,3 +78,5 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
+
+export default PasswordFormInput;

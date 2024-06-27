@@ -1,18 +1,15 @@
-import { View, Text, TouchableOpacity, ActionSheetIOS } from "react-native";
-import React from "react";
-import { Stack, router, useNavigation } from "expo-router";
-import Icon from 'react-native-ionicons'
-import { Ionicons } from "@expo/vector-icons"; // Assuming you have Ionicons installed
-import { DrawerActions } from "@react-navigation/native";
+import React from 'react';
+import { TouchableOpacity, ActionSheetIOS } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 type HeaderWithTitleProps = {
   title: string;
+  actionSheetOptions: string[];
   HideThisPage: boolean;
-  actionSheetOptions: string[],
 };
 
-export default function HeaderWithTitle({ title, actionSheetOptions, HideThisPage }: HeaderWithTitleProps) {
-
+const HeaderWithTitle = ({ title, actionSheetOptions, HideThisPage }: HeaderWithTitleProps) => {
   const onPress = () => {
     ActionSheetIOS.showActionSheetWithOptions(
       {
@@ -21,36 +18,30 @@ export default function HeaderWithTitle({ title, actionSheetOptions, HideThisPag
         cancelButtonIndex: 0,
         userInterfaceStyle: 'dark',
       },
-      buttonIndex => {
+      (buttonIndex) => {
         if (buttonIndex === 0) {
+          // Cancel button action
         } else if (buttonIndex === 1) {
-          if(HideThisPage)
-          {
+          if (HideThisPage) {
             router.push(`/home`);
-            return;
+          } else {
+            router.push(`/about`);
           }
-            
-          router.push(`/about`);
         } else if (buttonIndex === 2) {
           router.replace("/");
         }
       },
     );
-  }
+  };
 
   return (
-    <Stack.Screen
-      options={{
-        headerShown: true,
-        title,
-        headerLeft: () => (
-          <TouchableOpacity
-            onPress={onPress}
-          >
-            <Ionicons name="menu-outline" size={24} color="black" />
-          </TouchableOpacity>
-        ),
-      }}
-    />
+    <TouchableOpacity
+      onPress={onPress}
+      testID="header-left-button" // Adicionando o testID aqui
+    >
+      <Ionicons name="menu-outline" size={24} color="black" />
+    </TouchableOpacity>
   );
-}
+};
+
+export default HeaderWithTitle;
